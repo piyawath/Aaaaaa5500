@@ -1,0 +1,18 @@
+{
+  "short_name": "VillagePay",
+  "name": "Village Pay - Online Common Fee",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3534/3534033.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafc",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#1d4ed8",
+  "description": "System for paying village common fees online."
+}
