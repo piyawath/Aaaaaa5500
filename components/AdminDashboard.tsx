@@ -120,7 +120,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
 
       const success = updateUserPassword(user.username, passwordForm.new);
       if (success) {
-          user.password = passwordForm.new; // Update local reference
           setPasswordMsg({ text: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว', type: 'success' });
           setTimeout(() => {
               setIsPasswordModalOpen(false);

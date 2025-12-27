@@ -100,7 +100,6 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, onLogout }) => {
     const success = updateUserPassword(user.username, newPassword);
     if (success) {
       setPasswordMessage({ text: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว', type: 'success' });
-      user.password = newPassword; 
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
