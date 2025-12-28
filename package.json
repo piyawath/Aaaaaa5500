@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@replit/object-storage": "^1.0.0",
     "autoprefixer": "10.4.17",
     "cors": "^2.8.5",
     "express": "^5.2.1",
