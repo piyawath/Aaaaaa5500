@@ -1,6 +1,6 @@
 export default {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    '@tailwindcss/postcss': {}, // ลบเครื่องหมาย / ส่วนเกินออกให้ตรงกับ package.json
+    'autoprefixer': {},
   },
 }

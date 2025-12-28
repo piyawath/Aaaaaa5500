@@ -44,9 +44,8 @@ externalPort = 3000
 
 [deployment]
 build = ["sh", "-c", "npm install && npm run build"]
-deploymentTarget = "static"
+deploymentTarget = "cloudrun"
 run = ["sh", "-c", "npm run start"]
-publicDir = "dist"
 
 [rules]
 
@@ -56,3 +55,6 @@ publicDir = "dist"
 
 [rules.formatter.fileExtensions.".ts"]
 id = "module:nodejs-20/formatter:prettier"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-2caba07e-fe07-4c79-acd3-4c74c1f80881"
