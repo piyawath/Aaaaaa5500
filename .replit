@@ -57,4 +57,4 @@ publicDir = "dist"
 id = "module:nodejs-20/formatter:prettier"
 
 [objectStorage]
-defaultBucketID = "replit-objstore-2caba07e-fe07-4c79-acd3-4c74c1f80881"
+defaultBucketID = "replit-objstore-d92f983e-49f2-4349-a0d3-12a7983e0d54"
