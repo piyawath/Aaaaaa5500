@@ -45,7 +45,6 @@ externalPort = 3000
 [deployment]
 build = ["npm", "run", "build"]
 deploymentTarget = "static"
-run = ["sh", "-c", "npm run start"]
 publicDir = "dist"
 
 [rules]
