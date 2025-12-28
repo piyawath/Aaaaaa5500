@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Payment, MONTHS } from '../types';
+import { User, Payment, MONTHS, BANKS } from '../types';
 // ปรับฟังก์ชันที่ import ให้ตรงกับ storageService.ts ของเรา
 import { getPayments, updatePaymentStatus, setupUserPassword, saveSettings, getSettings } from '../services/storageService';
 import { LogOut, CheckCircle, XCircle, FileText, Search, AlertTriangle, Lock, QrCode, Upload, Building, Phone, Loader2 } from 'lucide-react';
@@ -211,8 +211,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
                             <input type="tel" className="w-full p-3 border rounded-xl bg-slate-50" value={settingsForm.contactNumber} onChange={e => setSettingsForm({...settingsForm, contactNumber: e.target.value})} />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-slate-500 mb-1 block">ชื่อธนาคาร / ชื่อบัญชี</label>
-                            <input type="text" className="w-full p-3 border rounded-xl bg-slate-50 mb-2" placeholder="ธนาคาร" value={settingsForm.bankName} onChange={e => setSettingsForm({...settingsForm, bankName: e.target.value})} />
+                            <label className="text-xs font-bold text-slate-500 mb-1 block">เลือกธนาคาร</label>
+                            <select className="w-full p-3 border rounded-xl bg-slate-50 mb-2 text-slate-900" value={settingsForm.bankName} onChange={e => setSettingsForm({...settingsForm, bankName: e.target.value})}>
+                                <option value="">-- เลือกธนาคาร --</option>
+                                {BANKS.map((bank) => (
+                                    <option key={bank} value={bank}>{bank}</option>
+                                ))}
+                            </select>
+                            <label className="text-xs font-bold text-slate-500 mb-1 block mt-2">ชื่อบัญชี</label>
                             <input type="text" className="w-full p-3 border rounded-xl bg-slate-50" placeholder="ชื่อบัญชี" value={settingsForm.accountName} onChange={e => setSettingsForm({...settingsForm, accountName: e.target.value})} />
                         </div>
                         <div>

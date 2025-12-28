@@ -166,11 +166,19 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, onLogout }) => {
                 <div className="bg-white p-2 rounded-xl inline-block border-2 border-dashed border-slate-200 shadow-inner">
                   <img src={settings?.paymentQrCode || defaultQr} alt="Payment QR" className="w-48 h-48 mx-auto object-contain mix-blend-multiply" />
                 </div>
-                <div className="mt-4 bg-slate-50 p-3 rounded-xl border border-slate-100 text-left space-y-1.5">
-                    <p className="text-xs text-slate-500 font-bold">บัญชีรับโอน:</p>
-                    <p className="text-sm font-bold text-slate-800 truncate">{settings?.bankName || 'ธนาคารกสิกรไทย'}</p>
-                    <p className="text-lg font-bold text-blue-700 tracking-wide font-mono">{settings?.accountNumber || 'xxx-x-xxxxx'}</p>
-                    <p className="text-xs text-slate-600 truncate">{settings?.accountName || 'ชื่อบัญชีนิติบุคคล'}</p>
+                <div className="mt-4 bg-slate-50 p-3 rounded-xl border border-slate-100 text-left space-y-2">
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-0.5">ธนาคาร</p>
+                      <p className="text-sm font-bold text-slate-800">{settings?.bankName || 'ยังไม่ได้ตั้งค่า'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-0.5">เลขบัญชี</p>
+                      <p className="text-lg font-bold text-blue-700 tracking-wide font-mono">{settings?.accountNumber || 'xxx-x-xxxxx'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-0.5">ชื่อบัญชี</p>
+                      <p className="text-xs text-slate-600">{settings?.accountName || 'ชื่อบัญชีนิติบุคคล'}</p>
+                    </div>
                 </div>
              </div>
 
