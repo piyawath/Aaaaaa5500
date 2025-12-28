@@ -3,44 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#1d4ed8" /> <!-- blue-700 -->
+    <meta name="theme-color" content="#1d4ed8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="manifest" href="/manifest.json" />
     <title>Village Pay</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
-      
-      :root {
-        --safe-top: env(safe-area-inset-top);
-        --safe-bottom: env(safe-area-inset-bottom);
-      }
-
-      body {
-        font-family: 'Prompt', sans-serif;
-        background-color: #f8fafc;
-        color: #1e293b;
-        -webkit-tap-highlight-color: transparent;
-        overscroll-behavior-y: none;
-        user-select: none; /* Prevent text selection like a real app */
-      }
-      
-      .pt-safe { padding-top: var(--safe-top); }
-      .pb-safe { padding-bottom: var(--safe-bottom); }
-      .mb-safe { margin-bottom: var(--safe-bottom); }
-      
-      /* Smooth transitions for mobile */
-      .animate-fade-in { animation: fadeIn 0.3s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-      /* Improved touch targets */
-      button:active { transform: scale(0.96); opacity: 0.9; }
-      
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+    <link rel="stylesheet" href="/index.css">
     <script type="importmap">
     {
       "imports": {
@@ -52,8 +21,7 @@
       }
     }
     </script>
-  <link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>

@@ -1,129 +1,80 @@
-import { User, Payment } from '../types';
+import { Payment, User, Settings } from '../types';
 
-const USERS_KEY = 'village_users';
-const PAYMENTS_KEY = 'village_payments';
-const SETTINGS_KEY = 'village_settings';
+// ใช้ URL ให้ตรงกับที่เปิดใน Replit
+const API_URL = 'http://localhost:3001/api';
 
-const INITIAL_USERS: User[] = [
-  // Admin initial state: No password, requires setup (isSetup: false)
-  { username: 'admin', password: '', role: 'admin', name: 'นิติบุคคล', isSetup: false }
-];
+// --- ฟังก์ชันช่วยเหลือ (Internal Helpers) ---
 
-const INITIAL_PAYMENTS: Payment[] = [
-  { id: '1', date: '2023-12-01', houseNo: '99/01', amount: 500, status: 'APPROVED', month: 'ธันวาคม', slipFileName: 'slip-dec-01.jpg' },
-  { id: '2', date: '2023-12-05', houseNo: '99/02', amount: 500, status: 'PENDING', month: 'ธันวาคม', slipFileName: 'slip-dec-02.jpg' }
-];
+// ดึงข้อมูลก้อนใหญ่จาก db.json
+const fetchFullDatabase = async () => {
+  const res = await fetch(`${API_URL}/data`);
+  if (!res.ok) throw new Error('Network response was not ok');
+  return res.json();
+};
 
-export interface PaymentSettings {
-  paymentQrCode: string | null;
-  bankName: string;
-  accountName: string;
-  accountNumber: string;
-  contactNumber: string;
-}
+// บันทึกข้อมูลก้อนใหญ่กลับไปที่ db.json
+const saveFullDatabase = async (data: any) => {
+  await fetch(`${API_URL}/save`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+};
 
-export const initStorage = () => {
-  if (!localStorage.getItem(USERS_KEY)) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(INITIAL_USERS));
+// --- ฟังก์ชันที่ UI เรียกใช้ (Exports) ---
+
+export const initStorage = async (): Promise<void> => {
+  try {
+    await fetchFullDatabase();
+  } catch (e) {
+    console.error("Server connection failed");
   }
-  if (!localStorage.getItem(PAYMENTS_KEY)) {
-    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(INITIAL_PAYMENTS));
-  }
 };
 
-export const getUsers = (): User[] => {
-  const data = localStorage.getItem(USERS_KEY);
-  return data ? JSON.parse(data) : [];
+export const checkUserStatus = async (username: string): Promise<User | undefined> => {
+  const data = await fetchFullDatabase();
+  return data.users.find((u: User) => u.username === username);
 };
 
-export const checkUserStatus = (username: string): { exists: boolean, isSetup: boolean } => {
-  const users = getUsers();
-  const user = users.find(u => u.username === username);
-  if (!user) return { exists: false, isSetup: false };
-  return { exists: true, isSetup: !!user.isSetup };
-};
+export const setupUserPassword = async (username: string, password: string): Promise<boolean> => {
+  const data = await fetchFullDatabase();
+  const userIndex = data.users.findIndex((u: User) => u.username === username);
+  if (userIndex === -1) return false;
 
-export const setupUserPassword = (username: string, newPassword: string): boolean => {
-  const users = getUsers();
-  const index = users.findIndex(u => u.username === username);
+  data.users[userIndex].password = password;
+  data.users[userIndex].isFirstTime = false;
   
+  await saveFullDatabase(data);
+  return true;
+};
+
+export const addPayment = async (payment: Payment): Promise<void> => {
+  const data = await fetchFullDatabase();
+  data.payments.push(payment);
+  await saveFullDatabase(data);
+};
+
+export const getPayments = async (): Promise<Payment[]> => {
+  const data = await fetchFullDatabase();
+  return data.payments;
+};
+
+export const updatePaymentStatus = async (id: string, status: 'APPROVED' | 'REJECTED'): Promise<void> => {
+  const data = await fetchFullDatabase();
+  const index = data.payments.findIndex((p: Payment) => p.id === id);
   if (index !== -1) {
-    // Existing user setting up password or updating it
-    users[index].password = newPassword;
-    users[index].isSetup = true;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    return true;
-  } else {
-    // New user registration (Auto-create)
-    const newUser: User = {
-        username,
-        password: newPassword,
-        role: 'user',
-        name: `เจ้าของบ้าน ${username}`, // Generic display name
-        commonFee: 500, // Default fee
-        isSetup: true
-    };
-    users.push(newUser);
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    return true;
+    data.payments[index].status = status;
+    await saveFullDatabase(data);
   }
 };
 
-export const updateUserPassword = (username: string, newPassword: string): boolean => {
-  // Reuse setup function as logic is compatible
-  return setupUserPassword(username, newPassword);
+export const getSettings = async (): Promise<Settings> => {
+  const data = await fetchFullDatabase();
+  return data.settings || {};
 };
 
-export const getPayments = (): Payment[] => {
-  const data = localStorage.getItem(PAYMENTS_KEY);
-  return data ? JSON.parse(data) : [];
-};
-
-export const addPayment = (payment: Payment) => {
-  const payments = getPayments();
-  payments.push(payment);
-  localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
-};
-
-export const updatePaymentStatus = (id: string, status: 'APPROVED' | 'REJECTED') => {
-  const payments = getPayments();
-  const index = payments.findIndex(p => p.id === id);
-  if (index !== -1) {
-    payments[index].status = status;
-    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
-  }
-};
-
-// --- Settings & QR Code ---
-
-export const getSettings = (): PaymentSettings => {
-  const data = localStorage.getItem(SETTINGS_KEY);
-  const defaults: PaymentSettings = {
-    paymentQrCode: null,
-    bankName: '',
-    accountName: '',
-    accountNumber: '',
-    contactNumber: '02-123-4567'
-  };
-  
-  if (data) {
-    return { ...defaults, ...JSON.parse(data) };
-  }
-  return defaults;
-};
-
-export const saveSettings = (settings: Partial<PaymentSettings>) => {
-  const data = localStorage.getItem(SETTINGS_KEY);
-  const current = data ? JSON.parse(data) : {};
-  const updated = { ...current, ...settings };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
-};
-
-// Wrappers for backward compatibility if needed, using the new unified settings
-export const getQrCode = (): string | null => {
-  return getSettings().paymentQrCode;
-};
-
-export const saveQrCode = (base64Image: string) => {
-  saveSettings({ paymentQrCode: base64Image });
+export const saveSettings = async (settings: Settings): Promise<void> => {
+  const data = await fetchFullDatabase();
+  data.settings = settings;
+  await saveFullDatabase(data);
 };

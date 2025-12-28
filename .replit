@@ -31,6 +31,10 @@ waitForPort = 5000
 outputType = "webview"
 
 [[ports]]
+localPort = 3001
+externalPort = 3001
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
@@ -43,3 +47,12 @@ build = ["sh", "-c", "npm install && npm run build"]
 deploymentTarget = "static"
 run = ["sh", "-c", "npm run start"]
 publicDir = "dist"
+
+[rules]
+
+[rules.formatter]
+
+[rules.formatter.fileExtensions]
+
+[rules.formatter.fileExtensions.".ts"]
+id = "module:nodejs-20/formatter:prettier"
