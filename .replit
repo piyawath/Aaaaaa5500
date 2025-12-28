@@ -7,7 +7,7 @@ packages = ["unzip"]
 expertMode = true
 
 [workflows]
-runButton = "Project"
+runButton = "Village Pay Dev Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -21,11 +21,11 @@ args = "Village Pay Dev Server"
 [[workflows.workflow]]
 name = "Village Pay Dev Server"
 author = "agent"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
+task = "workflow.run"
+args = "Village Pay Dev Server"
 
 [workflows.workflow.metadata]
 outputType = "webview"
