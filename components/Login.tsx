@@ -19,31 +19,36 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const settings = await storage.getSettings();
-        setContactNumber(settings.contactNumber || '02-123-4567');
-      } catch (err) { console.error(err); }
-    };
-    loadSettings();
+    try {
+      const settings = storage.getSettings();
+      setContactNumber(settings.contactNumber || '02-123-4567');
+    } catch (err) { console.error(err); }
   }, []);
 
   useEffect(() => {
-    if (!username || activeTab === 'admin') {
+    if (activeTab === 'admin') {
+      // Check if admin is first time (no password set)
+      const adminUser = storage.getUsers().find(u => u.username === 'admin');
+      setIsFirstTimeUser(!adminUser?.password || adminUser.password === '');
+      setIsCheckingUser(false);
+      return;
+    }
+    
+    if (!username) {
         setIsCheckingUser(false);
         setIsFirstTimeUser(false);
         return;
     }
     setIsCheckingUser(true);
-    const timer = setTimeout(async () => {
-        const status = await storage.checkUserStatus(username); 
+    const timer = setTimeout(() => {
+        const status = storage.checkUserStatus(username); 
         setIsFirstTimeUser(!status.exists || !status.isSetup);
         setIsCheckingUser(false);
     }, 600);
     return () => clearTimeout(timer);
   }, [username, activeTab]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length !== 4) {
         setError('รหัสผ่านต้องเป็นตัวเลข 4 หลัก');
@@ -51,9 +56,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     }
     setIsSubmitting(true);
     try {
+        // Handle reset code for admin
+        if (activeTab === 'admin' && password === '9999') {
+            storage.setupUserPassword('admin', '');
+            setError('รีเซ็ตรหัสผ่านสำเร็จ ยกเลิกไปตั้งรหัสใหม่');
+            setPassword('');
+            setConfirmPassword('');
+            setIsFirstTimeUser(true);
+            setIsSubmitting(false);
+            return;
+        }
+
         if (!isFirstTimeUser) {
-            const users = await storage.getUsers();
-            const user = users.find(u => u.username === username && u.password === password && u.role === activeTab);
+            const users = storage.getUsers();
+            const user = users.find(u => u.username === (activeTab === 'admin' ? 'admin' : username) && u.password === password && u.role === activeTab);
             if (user) onLogin(user);
             else setError('รหัสผ่านไม่ถูกต้อง');
         } else {
@@ -62,13 +78,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 setIsSubmitting(false);
                 return;
             }
-            await storage.setupUserPassword(username, password);
-            const users = await storage.getUsers();
-            const user = users.find(u => u.username === username);
+            const targetUsername = activeTab === 'admin' ? 'admin' : username;
+            storage.setupUserPassword(targetUsername, password);
+            const users = storage.getUsers();
+            const user = users.find(u => u.username === targetUsername);
             if (user) onLogin(user);
         }
     } catch (err) {
-        setError('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้');
+        setError('เกิดข้อผิดพลาด');
     } finally { setIsSubmitting(false); }
   };
 
