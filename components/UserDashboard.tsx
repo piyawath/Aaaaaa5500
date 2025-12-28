@@ -101,11 +101,15 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, onLogout }) => {
       return;
     }
 
-    await setupUserPassword(user.username, newPassword);
-    setPasswordMessage({ text: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว', type: 'success' });
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    try {
+      await setupUserPassword(user.username, newPassword);
+      setPasswordMessage({ text: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว', type: 'success' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      setPasswordMessage({ text: 'ไม่สามารถบันทึกรหัสผ่านได้', type: 'error' });
+    }
   };
 
   const getStatusBadge = (status: string) => {

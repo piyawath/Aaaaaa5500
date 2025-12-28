@@ -46,14 +46,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
   }, []);
 
   const handleOpenQrModal = async () => {
-      const settings = await getSettings();
-      setPreviewQr(settings.paymentQrCode || null);
-      setSettingsForm({
-          bankName: settings.bankName || '',
-          accountName: settings.accountName || '',
-          accountNumber: settings.accountNumber || '',
-          contactNumber: settings.contactNumber || ''
-      });
+      try {
+          const settings = await getSettings();
+          setPreviewQr(settings.paymentQrCode || null);
+          setSettingsForm({
+              bankName: settings.bankName || '',
+              accountName: settings.accountName || '',
+              accountNumber: settings.accountNumber || '',
+              contactNumber: settings.contactNumber || ''
+          });
+      } catch (error) {
+          console.error('Error loading settings:', error);
+      }
       setIsQrModalOpen(true);
   };
 
@@ -219,7 +223,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user, onLogout }) => {
                                 ))}
                             </select>
                             <label className="text-xs font-bold text-slate-500 mb-1 block mt-2">ชื่อบัญชี</label>
-                            <input type="text" className="w-full p-3 border rounded-xl bg-slate-50" placeholder="ชื่อบัญชี" value={settingsForm.accountName} onChange={e => setSettingsForm({...settingsForm, accountName: e.target.value})} />
+                            <input type="text" className="w-full p-3 border rounded-xl bg-slate-50 mb-2" placeholder="ชื่อบัญชี" value={settingsForm.accountName} onChange={e => setSettingsForm({...settingsForm, accountName: e.target.value})} />
+                            <label className="text-xs font-bold text-slate-500 mb-1 block">เลขบัญชี</label>
+                            <input type="text" className="w-full p-3 border rounded-xl bg-slate-50" placeholder="เลขบัญชี" value={settingsForm.accountNumber} onChange={e => setSettingsForm({...settingsForm, accountNumber: e.target.value})} />
                         </div>
                         <div>
                             <label className="text-xs font-bold text-slate-500 mb-1 block">รูปภาพ QR Code</label>
